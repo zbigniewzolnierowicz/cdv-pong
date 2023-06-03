@@ -786,13 +786,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 88583912}
     - target: {fileID: 4268935635996640820, guid: b5660ad25a8bf994197598c4d114cd43, type: 3}
-      propertyPath: maxSpeed
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4268935635996640820, guid: b5660ad25a8bf994197598c4d114cd43, type: 3}
-      propertyPath: minSpeed
-      value: 3.9
-      objectReference: {fileID: 0}
+      propertyPath: gameController
+      value: 
+      objectReference: {fileID: 88583912}
     - target: {fileID: 4268935635996640821, guid: b5660ad25a8bf994197598c4d114cd43, type: 3}
       propertyPath: m_RootOrder
       value: 5

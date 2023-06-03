@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class BallController : MonoBehaviour
@@ -18,7 +20,11 @@ public class BallController : MonoBehaviour
     
     private Vector2 _vel = Vector2.zero;
 
-    public GameController gc;
+    public GameController gameController;
+
+    public bool serveAutomatically = false;
+    
+    public InputAction serveBallAction;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +36,7 @@ public class BallController : MonoBehaviour
         }
         
         _rb = GetComponent<Rigidbody2D>();
+        serveBallAction.Enable();
         ServeBall();
     }
 
@@ -39,24 +46,25 @@ public class BallController : MonoBehaviour
         _vel = _rb.velocity;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.DrawLine(this.transform.position, _rb.velocity, Color.red);
-    }
-
     private void OnTriggerEnter2D(Collider2D col)
     {
         Debug.Log($"[INFO] Entered the following trigger: {col.name}");
         
         ResetPosition();
-        gc.OnScore(col.tag);
+        gameController.OnScore(col.tag);
         StartCoroutine(BallServeCoroutine());
     }
 
     private IEnumerator BallServeCoroutine(int seconds = 1)
     {
-        yield return new WaitForSecondsRealtime(seconds);
+        if (serveAutomatically)
+        {
+            yield return new WaitForSecondsRealtime(seconds);
+        }
+        else
+        {
+            yield return new WaitUntil(() => serveBallAction.triggered);
+        }
         ServeBall();
     }
 

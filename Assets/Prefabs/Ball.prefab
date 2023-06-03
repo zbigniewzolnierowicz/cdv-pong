@@ -119,6 +119,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f06aa7e1d1d72f4799d79e1d43cab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minSpeed: 1
-  maxSpeed: 10
-  vel: {x: 0, y: 0}
+  minSpeed: 3.9
+  maxSpeed: 7
+  gc: {fileID: 0}
+  ServeAutomatically: 0
+  serveBallAction:
+    m_Name: Serve Ball
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: b7310d99-ec5a-4e4a-bd8d-5ce2813065bc
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: aa0c506a-d48a-4c7a-8848-f3d8b5bf27f3
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Serve Ball
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 5f0d7ec4-6a6c-406b-9c94-91e91f099411
+      m_Path: <Keyboard>/enter
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Serve Ball
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 4798d2a3-cd20-4998-8b14-07e005c261f4
+      m_Path: <Keyboard>/z
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Serve Ball
+      m_Flags: 0
+    m_Flags: 0
