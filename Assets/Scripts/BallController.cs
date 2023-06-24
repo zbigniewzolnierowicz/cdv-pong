@@ -1,33 +1,29 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class BallController : MonoBehaviour
 {
-    private Rigidbody2D _rb;
     private const float MinSpeedRange = 2f;
     private const float MaxSpeedRange = 20f;
-    
-    [Range(MinSpeedRange, MaxSpeedRange)]
-    public float minSpeed = MinSpeedRange;
 
-    [Range(MinSpeedRange, MaxSpeedRange)]
-    public float maxSpeed = MaxSpeedRange;
+    [Range(MinSpeedRange, MaxSpeedRange)] public float minSpeed = MinSpeedRange;
+
+    [Range(MinSpeedRange, MaxSpeedRange)] public float maxSpeed = MaxSpeedRange;
+
     public bool serveAutomatically = false;
     public bool serveRandomly = false;
-    
+
     public InputAction serveBallAction;
-    
+
     public ScoreController scoreController;
-    
-    private Vector2 _vel = Vector2.zero;
-    
     private bool _leftServing = true;
-    
+    private Rigidbody2D _rb;
+
+    private Vector2 _vel = Vector2.zero;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +32,7 @@ public class BallController : MonoBehaviour
         {
             throw new Exception("Max speed has to be bigger than min speed!");
         }
-        
+
         _rb = GetComponent<Rigidbody2D>();
         serveBallAction.Enable();
         ServeBall();
@@ -51,7 +47,7 @@ public class BallController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         Debug.Log($"[INFO] Entered the following trigger: {col.name}");
-        
+
         ResetPosition();
         OnScore(col.tag);
         StartCoroutine(BallServeCoroutine());
@@ -69,6 +65,7 @@ public class BallController : MonoBehaviour
         {
             yield return new WaitUntil(() => serveBallAction.triggered);
         }
+
         ServeBall();
     }
 
@@ -95,7 +92,7 @@ public class BallController : MonoBehaviour
     {
         return direction * speed;
     }
-    
+
     void ServeBall()
     {
         var x = serveRandomly
@@ -103,12 +100,12 @@ public class BallController : MonoBehaviour
             ? GetLeftRight(Randomize)
             // Serve to the loser
             : GetLeftRight(ServeToLoser);
-        
+
         var y = Random.Range(-1f, 1f);
         var direction = new Vector2(x, y).normalized;
         var speed = Random.Range(minSpeed, maxSpeed);
         var newVelocity = CalculateVelocity(direction, speed);
-        
+
         // Apply initial velocity
         _vel = newVelocity;
         _rb.velocity = newVelocity;
@@ -119,7 +116,7 @@ public class BallController : MonoBehaviour
         _rb.velocity = Vector2.zero;
         _rb.position = Vector2.zero;
     }
-    
+
     void OnScore(string side)
     {
         switch (side)
@@ -134,5 +131,4 @@ public class BallController : MonoBehaviour
                 break;
         }
     }
-
 }
