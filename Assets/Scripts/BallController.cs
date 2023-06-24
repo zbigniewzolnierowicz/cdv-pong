@@ -17,15 +17,17 @@ public class BallController : MonoBehaviour
 
     [Range(MinSpeedRange, MaxSpeedRange)]
     public float maxSpeed = MaxSpeedRange;
-    
-    private Vector2 _vel = Vector2.zero;
-
-    public GameController gameController;
-
     public bool serveAutomatically = false;
+    public bool serveRandomly = false;
     
     public InputAction serveBallAction;
-
+    
+    public ScoreController scoreController;
+    
+    private Vector2 _vel = Vector2.zero;
+    
+    private bool _leftServing = true;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -51,16 +53,18 @@ public class BallController : MonoBehaviour
         Debug.Log($"[INFO] Entered the following trigger: {col.name}");
         
         ResetPosition();
-        gameController.OnScore(col.tag);
+        OnScore(col.tag);
         StartCoroutine(BallServeCoroutine());
     }
 
     private IEnumerator BallServeCoroutine(int seconds = 1)
     {
+        // Serve the ball automatically
         if (serveAutomatically)
         {
             yield return new WaitForSecondsRealtime(seconds);
         }
+        // Serve the ball manually
         else
         {
             yield return new WaitUntil(() => serveBallAction.triggered);
@@ -69,13 +73,22 @@ public class BallController : MonoBehaviour
     }
 
     /// <summary>
-    /// Randomizes sides
+    /// Converts a boolean to direction
     /// </summary>
     /// <returns>-1f if left, 1f if right</returns>
-    float GetRandomLeftRight()
+    float GetLeftRight(Func<bool> isLeft)
     {
-        var isLeft = Random.value % 2 == 0;
-        return isLeft ? -1f : 1f;
+        return isLeft() ? -1f : 1f;
+    }
+
+    bool Randomize()
+    {
+        return Random.value % 2 == 0;
+    }
+
+    bool ServeToLoser()
+    {
+        return _leftServing;
     }
 
     Vector2 CalculateVelocity(Vector2 direction, float speed)
@@ -85,8 +98,12 @@ public class BallController : MonoBehaviour
     
     void ServeBall()
     {
-        // Generate random ball start direction
-        var x = GetRandomLeftRight();
+        var x = serveRandomly
+            // Generate random ball start direction
+            ? GetLeftRight(Randomize)
+            // Serve to the loser
+            : GetLeftRight(ServeToLoser);
+        
         var y = Random.Range(-1f, 1f);
         var direction = new Vector2(x, y).normalized;
         var speed = Random.Range(minSpeed, maxSpeed);
@@ -102,4 +119,20 @@ public class BallController : MonoBehaviour
         _rb.velocity = Vector2.zero;
         _rb.position = Vector2.zero;
     }
+    
+    void OnScore(string side)
+    {
+        switch (side)
+        {
+            case "Left Trigger":
+                scoreController.OnRightScore();
+                _leftServing = true;
+                break;
+            case "Right Trigger":
+                scoreController.OnLeftScore();
+                _leftServing = false;
+                break;
+        }
+    }
+
 }
